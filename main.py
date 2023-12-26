@@ -23,7 +23,7 @@ class Board:
             for x in range(self.width):
                 pygame.draw.rect(screen, pygame.Color(0, 0, 0), (
                     x * self.cell_size + self.left, y * self.cell_size + self.top, self.cell_size,
-                    self.cell_size), 1)
+                    self.cell_size), 9)
 
 class SquareSprite2(pygame.sprite.Sprite):
     def __init__(self, x, y, size):
@@ -197,7 +197,7 @@ size = 1200, 600
 screen = pygame.display.set_mode((1200, 700))
 pygame.display.set_caption('Инициализация игры')
 board = Board(4, 4)
-board.set_view(450, 150, 70)
+board.set_view(350, 100, 130)
 running = True
 while running:
     for event in pygame.event.get():
