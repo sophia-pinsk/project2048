@@ -19,9 +19,10 @@ class Board:
         self.cell_size = cell_size
 
     def render(self, screen):
+        pygame.draw.rect(screen, pygame.Color(100, 100, 100), (self.left, self.top, self.cell_size * 4, self.cell_size * 4))
         for y in range(self.height):
             for x in range(self.width):
-                pygame.draw.rect(screen, pygame.Color(0, 0, 0), (
+                pygame.draw.rect(screen, pygame.Color(10, 10, 10), (
                     x * self.cell_size + self.left, y * self.cell_size + self.top, self.cell_size,
                     self.cell_size), 9)
 
@@ -203,7 +204,7 @@ while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
-    screen.fill((250, 250, 250))
+    screen.fill((30, 30, 30))
     board.render(screen)
     pygame.display.flip()
 pygame.quit()
