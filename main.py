@@ -19,27 +19,31 @@ class Board:
         self.cell_size = cell_size
 
     def render(self, screen):
-        pygame.draw.rect(screen, pygame.Color(100, 100, 100), (self.left, self.top, self.cell_size * 4, self.cell_size * 4))
+        pygame.draw.rect(screen, pygame.Color(100, 100, 100),
+                         (self.left, self.top, self.cell_size * 4, self.cell_size * 4))
         for y in range(self.height):
             for x in range(self.width):
                 pygame.draw.rect(screen, pygame.Color(10, 10, 10), (
                     x * self.cell_size + self.left, y * self.cell_size + self.top, self.cell_size,
                     self.cell_size), 9)
 
+
 class SquareSprite2(pygame.sprite.Sprite):
-    def __init__(self, x, y, size):
+    def __init__(self, x, y, size, screen):
         super().__init__()
         self.image = pygame.Surface((size, size))
         self.rect = self.image.get_rect(center=(x, y))
         self.color = (223, 231, 255)
-        self.font = pygame.font.Font(None, size//2)
-        self.update()
+        self.font = pygame.font.Font(None, size // 2)
+        self.updatee(screen)
 
-    def update(self):
+    def updatee(self, screen):
         self.image.fill(self.color)  # Заполнение цветом
         number = self.font.render('2', True, (0, 0, 0))  # Рендеринг цифры "2"
         number_rect = number.get_rect(center=self.image.get_rect().center)
-        self.image.blit(number, number_rect)  # Отрисовка цифры на поверхности
+        self.image.blit(number, number_rect)
+        screen.blit(self.image, self.rect)
+
 
 class SquareSprite4(pygame.sprite.Sprite):
     def __init__(self, x, y, size):
@@ -47,23 +51,22 @@ class SquareSprite4(pygame.sprite.Sprite):
         self.image = pygame.Surface((size, size))
         self.rect = self.image.get_rect(center=(x, y))
         self.color = (213, 221, 255)
-        self.font = pygame.font.Font(None, size//2)
-        self.update()
+        self.font = pygame.font.Font(None, size // 2)
 
     def update(self):
         self.image.fill(self.color)
         number = self.font.render('4', True, (0, 0, 0))
         number_rect = number.get_rect(center=self.image.get_rect().center)
-        self.image.blit(number, number_rect) 
-        
-        
+        self.image.blit(number, number_rect)
+
+
 class SquareSprite8(pygame.sprite.Sprite):
     def __init__(self, x, y, size):
         super().__init__()
         self.image = pygame.Surface((size, size))
         self.rect = self.image.get_rect(center=(x, y))
         self.color = (203, 211, 255)
-        self.font = pygame.font.Font(None, size//2)
+        self.font = pygame.font.Font(None, size // 2)
         self.update()
 
     def update(self):
@@ -71,15 +74,15 @@ class SquareSprite8(pygame.sprite.Sprite):
         number = self.font.render('8', True, (0, 0, 0))
         number_rect = number.get_rect(center=self.image.get_rect().center)
         self.image.blit(number, number_rect)
-        
-        
+
+
 class SquareSprite16(pygame.sprite.Sprite):
     def __init__(self, x, y, size):
         super().__init__()
         self.image = pygame.Surface((size, size))
         self.rect = self.image.get_rect(center=(x, y))
         self.color = (193, 201, 255)
-        self.font = pygame.font.Font(None, size//2)
+        self.font = pygame.font.Font(None, size // 2)
         self.update()
 
     def update(self):
@@ -88,13 +91,14 @@ class SquareSprite16(pygame.sprite.Sprite):
         number_rect = number.get_rect(center=self.image.get_rect().center)
         self.image.blit(number, number_rect)
 
+
 class SquareSprite32(pygame.sprite.Sprite):
     def __init__(self, x, y, size):
         super().__init__()
         self.image = pygame.Surface((size, size))
         self.rect = self.image.get_rect(center=(x, y))
         self.color = (183, 191, 255)
-        self.font = pygame.font.Font(None, size//2)
+        self.font = pygame.font.Font(None, size // 2)
         self.update()
 
     def update(self):
@@ -103,13 +107,14 @@ class SquareSprite32(pygame.sprite.Sprite):
         number_rect = number.get_rect(center=self.image.get_rect().center)
         self.image.blit(number, number_rect)
 
+
 class SquareSprite64(pygame.sprite.Sprite):
     def __init__(self, x, y, size):
         super().__init__()
         self.image = pygame.Surface((size, size))
         self.rect = self.image.get_rect(center=(x, y))
         self.color = (173, 191, 255)
-        self.font = pygame.font.Font(None, size//2)
+        self.font = pygame.font.Font(None, size // 2)
         self.update()
 
     def update(self):
@@ -118,13 +123,14 @@ class SquareSprite64(pygame.sprite.Sprite):
         number_rect = number.get_rect(center=self.image.get_rect().center)
         self.image.blit(number, number_rect)
 
+
 class SquareSprite128(pygame.sprite.Sprite):
     def __init__(self, x, y, size):
         super().__init__()
         self.image = pygame.Surface((size, size))
         self.rect = self.image.get_rect(center=(x, y))
         self.color = (163, 191, 255)
-        self.font = pygame.font.Font(None, size//2)
+        self.font = pygame.font.Font(None, size // 2)
         self.update()
 
     def update(self):
@@ -133,13 +139,14 @@ class SquareSprite128(pygame.sprite.Sprite):
         number_rect = number.get_rect(center=self.image.get_rect().center)
         self.image.blit(number, number_rect)
 
+
 class SquareSprite256(pygame.sprite.Sprite):
     def __init__(self, x, y, size):
         super().__init__()
         self.image = pygame.Surface((size, size))
         self.rect = self.image.get_rect(center=(x, y))
         self.color = (153, 181, 255)
-        self.font = pygame.font.Font(None, size//2)
+        self.font = pygame.font.Font(None, size // 2)
         self.update()
 
     def update(self):
@@ -148,13 +155,14 @@ class SquareSprite256(pygame.sprite.Sprite):
         number_rect = number.get_rect(center=self.image.get_rect().center)
         self.image.blit(number, number_rect)
 
+
 class SquareSprite512(pygame.sprite.Sprite):
     def __init__(self, x, y, size):
         super().__init__()
         self.image = pygame.Surface((size, size))
         self.rect = self.image.get_rect(center=(x, y))
         self.color = (143, 171, 255)
-        self.font = pygame.font.Font(None, size//2)
+        self.font = pygame.font.Font(None, size // 2)
         self.update()
 
     def update(self):
@@ -163,13 +171,14 @@ class SquareSprite512(pygame.sprite.Sprite):
         number_rect = number.get_rect(center=self.image.get_rect().center)
         self.image.blit(number, number_rect)
 
+
 class SquareSprite1024(pygame.sprite.Sprite):
     def __init__(self, x, y, size):
         super().__init__()
         self.image = pygame.Surface((size, size))
         self.rect = self.image.get_rect(center=(x, y))
         self.color = (133, 161, 255)
-        self.font = pygame.font.Font(None, size//2)
+        self.font = pygame.font.Font(None, size // 2)
         self.update()
 
     def update(self):
@@ -178,20 +187,22 @@ class SquareSprite1024(pygame.sprite.Sprite):
         number_rect = number.get_rect(center=self.image.get_rect().center)
         self.image.blit(number, number_rect)
 
+
 class SquareSprite2048(pygame.sprite.Sprite):
     def __init__(self, x, y, size):
         super().__init__()
         self.image = pygame.Surface((size, size))
         self.rect = self.image.get_rect(center=(x, y))
         self.color = (123, 151, 255)
-        self.font = pygame.font.Font(None, size//2)
+        self.font = pygame.font.Font(None, size // 2)
         self.update()
 
     def update(self):
         self.image.fill(self.color)
-        number = self.font.render('2048', True, (0, 0, 0)) 
+        number = self.font.render('2048', True, (0, 0, 0))
         number_rect = number.get_rect(center=self.image.get_rect().center)
         self.image.blit(number, number_rect)
+
 
 pygame.init()
 size = 1200, 600
@@ -206,5 +217,6 @@ while running:
             running = False
     screen.fill((30, 30, 30))
     board.render(screen)
+    SquareSprite2(415, 165, 115, screen)
     pygame.display.flip()
 pygame.quit()
