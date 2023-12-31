@@ -206,6 +206,12 @@ class SquareSprite2048(pygame.sprite.Sprite):
 
 pygame.init()
 size = 1200, 600
+
+w1 = [(415, 165, 115), (545, 165, 115), (675, 165, 115), (805, 165, 115),
+      (415, 295, 115), (545, 295, 115), (675, 295, 115), (805, 295, 115),
+      (415, 425, 115), (545, 425, 115), (675, 425, 115), (805, 425, 115),
+      (415, 555, 115), (545, 555, 115), (675, 555, 115), (805, 555, 115)]
+
 screen = pygame.display.set_mode((1200, 700))
 pygame.display.set_caption('Инициализация игры')
 board = Board(4, 4)
@@ -217,6 +223,6 @@ while running:
             running = False
     screen.fill((30, 30, 30))
     board.render(screen)
-    SquareSprite2(415, 165, 115, screen)
+    SquareSprite2(805, 555, 115, screen)
     pygame.display.flip()
 pygame.quit()
