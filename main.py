@@ -237,6 +237,12 @@ while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
+        elif event.type == pygame.K_UP:
+            s3 = choice(w1)
+            while s3 == s1 or s3 == s2:
+                s3 = choice(w1)
+            SquareSprite4(s3[0], s3[1], s3[2])
+            pygame.display.flip()
     screen.fill((30, 30, 30))
     board.render(screen)
     SquareSprite2(s1[0], s1[1], s1[2])
