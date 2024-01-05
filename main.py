@@ -215,6 +215,89 @@ class SquareSprite2048(pygame.sprite.Sprite):
         self.image.blit(number, number_rect)
         screen.blit(self.image, self.rect)
 
+def move(direction, screen):
+    if direction == "w":
+        return moveUp(screen)
+    if direction == "s":
+        return moveDown(screen)
+    if direction == "a":
+        return moveLeft(screen)
+    if direction == "d":
+        return moveRight(screen)
+
+
+def moveLeft(board):
+    shiftLeft(board)
+    for i in range(4):
+        for j in range(3):
+            if board[i][j] == board[i][j + 1] and board[i][j] != 0:
+                board[i][j] *= 2
+                board[i][j + 1] = 0
+                j = 0
+    shiftLeft(board)
+    return board
+
+
+def moveUp(board):
+    board = rotateLeft(board)
+    board = moveLeft(board)
+    board = rotateRight(board)
+    return board
+
+
+def moveRight(board):
+    shiftRight(board)
+    for i in range(4):
+        for j in range(3, 0, -1):
+            if board[i][j] == board[i][j - 1] and board[i][j] != 0:
+                board[i][j] *= 2
+                board[i][j - 1] = 0
+                j = 0
+
+    # final shift
+    shiftRight(board)
+    return board
+
+
+def moveDown(board):
+    board = rotateLeft(board)
+    board = moveLeft(board)
+    shiftRight(board)
+    board = rotateRight(board)
+    return board
+
+
+def shiftLeft(board):
+    for i in range(4):
+        nums, count = [], 0
+        for j in range(4):
+            if board[i][j] != 0:
+                nums.append(board[i][j])
+                count += 1
+        board[i] = nums
+        board[i].extend([0] * (4 - count))
+
+
+def shiftRight(board):
+    for i in range(4):
+        nums, count = [], 0
+        for j in range(4):
+            if board[i][j] != 0:
+                nums.append(board[i][j])
+                count += 1
+        board[i] = [0] * (4 - count)
+        board[i].extend(nums)
+
+
+def rotateLeft(board):
+    b = [[board[j][i] for j in range(4)] for i in range(3, -1, -1)]
+    return b
+
+
+def rotateRight(board):
+    b = rotateLeft(board)
+    b = rotateLeft(b)
+    return rotateLeft(b)
 
 pygame.init()
 size = 1200, 600
@@ -223,6 +306,15 @@ w1 = [(415, 165, 115), (545, 165, 115), (675, 165, 115), (805, 165, 115),
       (415, 295, 115), (545, 295, 115), (675, 295, 115), (805, 295, 115),
       (415, 425, 115), (545, 425, 115), (675, 425, 115), (805, 425, 115),
       (415, 555, 115), (545, 555, 115), (675, 555, 115), (805, 555, 115)]
+
+horizontal1 = [(415, 165, 115), (545, 165, 115), (675, 165, 115), (805, 165, 115)] # создаю координаты горизонтали
+horizontal2 = [(415, 295, 115), (545, 295, 115), (675, 295, 115), (805, 295, 115)]
+horizontal3 = [(415, 425, 115), (545, 425, 115), (675, 425, 115), (805, 425, 115)]
+horizontal4 = [(415, 555, 115), (545, 555115), (675, 555, 115), (805, 555, 115)]
+upright1 = [(415, 165, 115), (415, 295, 115), (415, 425, 115), (415, 555, 115)] # создаю координаты вертикали
+upright2 = [(545, 165, 115), (545, 295, 115), (545, 425, 115), (545, 555, 115)]
+upright3 = [(675, 165, 115), (675, 295, 115), (675, 425, 115), (675, 555, 115)]
+upright4 = [(805, 165, 115), (805, 295, 115), (805, 425, 115), (805, 555, 115)]
 
 screen = pygame.display.set_mode((1200, 700))
 pygame.display.set_caption('Инициализация игры')
