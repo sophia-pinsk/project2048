@@ -1,13 +1,13 @@
 import pygame
 import random
 
-screen_rect = (0, 0, 100, 100)
+screen_rect = (0, 0, 650, 650)
 
 pygame.init()
 
 pygame.display.set_caption('2048')
 
-screen = pygame.display.set_mode((100, 100))
+screen = pygame.display.set_mode((650, 650))
 
 # Функция для загрузки изображения
 def load_image(name, colorkey=None):
