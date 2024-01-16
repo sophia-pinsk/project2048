@@ -1,5 +1,7 @@
 import pygame
 import random
+import sys
+import os
 
 screen_rect = (0, 0, 650, 650)
 
@@ -227,3 +229,24 @@ def start_screen():
 def terminate():
     pygame.quit()
     sys.exit()
+
+
+if __name__ == '__main__':
+    pygame.init()
+    pygame.display.set_caption('2048')
+    size = WIDTH, HEIGHT = 800, 800
+    screen = pygame.display.set_mode(size)
+    fon = pygame.transform.scale(load_image('back.jpg'), (WIDTH, HEIGHT))
+    font2 = pygame.font.SysFont('calibri', 20)
+    font = pygame.font.SysFont('calibri', 40)
+    clock = pygame.time.Clock()
+    button_back = Button()
+    running = True
+    while running:
+        screen.fill((0, 0, 0))
+        start_screen()
+        pygame.display.flip()
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
+    pygame.quit()
