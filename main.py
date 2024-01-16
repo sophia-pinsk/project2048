@@ -1,6 +1,26 @@
 import pygame
 import random
 
+screen_rect = (0, 0, 100, 100)
+
+pygame.init()
+
+pygame.display.set_caption('2048')
+
+screen = pygame.display.set_mode((100, 100))
+
+# Функция для загрузки изображения
+def load_image(name, colorkey=None):
+    fullname = os.path.join(name)
+    image = pygame.image.load(fullname)
+    if colorkey is not None:
+        image = image.convert()
+        if colorkey == -1:
+            colorkey = image.get_at((0, 0))
+        image.set_colorkey(colorkey)
+    else:
+        image = image.convert_alpha()
+    return image
 
 class Board:
     def __init__(self, list, score=0, difficulty='normal'):
@@ -149,3 +169,61 @@ class Board:
                     font = pygame.font.SysFont('calibri', font_size)
                     myText = font.render(text, 1, pygame.Color('white'))
                     screen.blit(myText, (x + 54 - myText.get_width() / 2, y + 54 - myText.get_height() / 2))
+
+
+class Button:
+    def create_button(self, surface, color, x, y, length, height, text, text_color):
+        # Отрисовка кнопки
+        surface = self.draw_button(surface, color, length, height, x, y)
+        surface = self.write_text(surface, text, text_color, length, height, x, y)
+        self.rect = pygame.Rect(x, y, length, height)
+        return surface
+
+    def write_text(self, surface, text, text_color, length, height, x, y):
+        # Отображение текста на кнопке
+        myText = font2.render(text, 1, text_color)
+        surface.blit(myText, ((x + length / 2) - myText.get_width() / 2, (y + height / 2) - myText.get_height() / 2))
+        return surface
+
+    def draw_button(self, surface, color, length, height, x, y):
+        # Создание поверхности для кнопки и ее отрисовка
+        sur = pygame.Surface((length, height), pygame.SRCALPHA)
+        pygame.draw.rect(sur, pygame.Color(color), (0, 0, length, height), 0)
+        screen.blit(sur, (x, y))
+        return surface
+
+    def pressed(self, mouse):
+        if mouse[0] > self.rect.topleft[0]:
+            if mouse[1] > self.rect.topleft[1]:
+                if mouse[0] < self.rect.bottomright[0]:
+                    if mouse[1] < self.rect.bottomright[1]:
+                        return True
+        return False
+
+def start_screen():
+    screen.blit(fon, (0, 0))
+    font = pygame.font.SysFont('calibri', 80)
+    string_rendered = font.render('2048', 1, pygame.Color('black'))
+    screen.blit(string_rendered, (315, 60))
+    # Создание кнопок
+    button_normal = Button()
+    button_normal.create_button(screen, (25, 25, 25, 127), 160, 200, 220, 80, 'Начать обычную игру', (255, 255, 255))
+
+    button_hard = Button()
+    button_hard.create_button(screen, (25, 25, 25, 127), 425, 200, 220, 80, 'Начать сложную игру', (255, 255, 255))
+
+    button2 = Button()
+    button2.create_button(screen, (25, 25, 25, 127), 250, 330, 300, 80, 'Продолжить игру', (255, 255, 255))
+
+    button3 = Button()
+    button3.create_button(screen, (25, 25, 25, 127), 250, 450, 300, 80, 'Правила игры', (255, 255, 255))
+
+    button4 = Button()
+    button4.create_button(screen, (25, 25, 25, 127), 250, 570, 300, 80, 'Таблица игроков', (255, 255, 255))
+
+    pygame.display.flip()
+
+# Функция завершения работы программы
+def terminate():
+    pygame.quit()
+    sys.exit()
