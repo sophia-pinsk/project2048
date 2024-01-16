@@ -35,12 +35,14 @@ class Board:
             self.board = list
         else:
             self.board = self.gen_board()
+        # Цвета для различных значений на доске
         self.colors = {'2': '#8133ff', '4': '#aa33ff', '8': '#c933ff',
                        '16': '#eb33ff', '32': '#ff33eb',
                        '64': '#ff33c2', '128': '#ff337e', '256': '#ff333d',
                        '512': '#ad232a', '1024': '#ad5123', '2048': '#ff5500', '4096': '#ffe100'}
         self.score = score
 
+    # Генерация начальной доски
     def gen_board(self):
         board = [[0] * 5 for _ in range(5)]
         x = random.randint(0, 4)
@@ -89,6 +91,7 @@ class Board:
     # Движение кирпичей вверх
     def move_up(self):
         new_matrix = [[0] * 5 for _ in range(5)]
+        # Транспонирование матрицы
         for i in range(5):
             for j in range(5):
                 new_matrix[j][i] = self.board[i][j]
@@ -104,6 +107,7 @@ class Board:
                     self.score += new_matrix[i][j]
                     new_matrix[i].pop(j + 1)
                     new_matrix[i].append(0)
+        # Отмена транспонирования и обновление доски
         self.board.clear()
         self.board = [[0] * 5 for _ in range(5)]
         for i in range(5):
@@ -113,6 +117,7 @@ class Board:
     # Движение кирпичей вниз
     def move_down(self):
         new_matrix = [[0] * 5 for _ in range(5)]
+        # Транспонирование матрицы
         for i in range(5):
             for j in range(5):
                 new_matrix[j][i] = self.board[i][j]
@@ -128,13 +133,22 @@ class Board:
                     self.score += new_matrix[i][j]
                     new_matrix[i].pop(j - 1)
                     new_matrix[i].insert(0, 0)
+        # Отмена транспонирования и обновление доски
         self.board.clear()
         self.board = [[0] * 5 for _ in range(5)]
         for i in range(5):
             for j in range(5):
                 self.board[j][i] = new_matrix[i][j]
 
-    # Новый блок на доске
+    # Получение текущего счета
+    def get_score(self):
+        return self.score
+
+    # Получение текущей доски
+    def get_board(self):
+        return self.board
+
+    # Генерация нового блока на доске
     def new_block(self):
         f = False
         for i in range(5):
@@ -146,14 +160,19 @@ class Board:
             if self.board[x][y] == 0:
                 f = False
                 self.board[x][y] = random.choice([2, 4])
+        # Обновление экрана после добавления нового блока
         self.render(screen)
         pygame.display.flip()
 
+    # Отрисовка доски на экране
     def render(self, screen):
+        # Создание прозрачной поверхности для отрисовки
         s = pygame.Surface((600, 600), pygame.SRCALPHA)
         sur = pygame.Surface((108, 108), pygame.SRCALPHA)
+        # Заполнение фона
         pygame.draw.rect(s, pygame.Color((20, 20, 20)), (0, 0, 600, 600), 0)
         screen.blit(s, (100, 100))
+        # Отрисовка кирпичей на доске
         for i in range(5):
             for j in range(5):
                 x = 10 * (j + 1) + 108 * j + 100
@@ -207,7 +226,7 @@ def start_screen():
     font = pygame.font.SysFont('calibri', 80)
     string_rendered = font.render('2048', 1, pygame.Color('black'))
     screen.blit(string_rendered, (315, 60))
-    # Создание кнопок
+
     button_normal = Button()
     button_normal.create_button(screen, (25, 25, 25, 127), 160, 200, 220, 80, 'Начать обычную игру', (255, 255, 255))
 
@@ -225,10 +244,109 @@ def start_screen():
 
     pygame.display.flip()
 
+
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                terminate()
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if button3.pressed(event.pos):
+                    pygame.display.flip()
+                    rules_window()
+                    return
+                if button_normal.pressed(event.pos):
+                    pygame.display.flip()
+                    new_game_window(difficulty='normal')
+                    return
+                if button_hard.pressed(event.pos):
+                    pygame.display.flip()
+                    new_game_window(difficulty='hard')
+                    return
+        pygame.display.flip()
 # Функция завершения работы программы
+
 def terminate():
     pygame.quit()
     sys.exit()
+
+
+def rules_window():
+    screen.blit(fon, (0, 0))
+    intro_text = [
+        'Ваша задача в этой увлекательной игре — собрать кирпич с цифрой «2048».',
+        'В начале игры вам предоставляются два кирпичика с цифрой «2». Нажимая',
+        'кнопки вверх, вправо, влево или вниз, все ваши кирпичи смещаются в ',
+        'выбранном направлении. При столкновении клеток с одинаковым ',
+        'числовым значением они объединяются, создавая сумму, вдвое большую.',
+        'Игра продолжается до тех пор, пока все пустые ячейки не заполнятся,',
+        'и вы больше не сможете перемещать кирпичи ни в одном из направлений.',
+        'Или же, конечно, когда на одном из кирпичей появится долгожданная цифра 2048.',
+        'Завершив игру, ваш результат заносится в турнирную таблицу,',
+        'отражая вашу мастерство в этом увлекательном кроссворде цифр.',
+        'Сможете ли вы достичь заветной цифры 2048 и войти в историю игры?',
+        'Сыграйте, чтобы узнать!'
+    ]
+    rules_text = font.render('Правила игры', 1, pygame.Color('black'))
+    screen.blit(rules_text, (250, 20))
+    text_coord = 180
+    for line in intro_text:
+        string_rendered = font2.render(line, 1, pygame.Color('black'))
+        intro_rect = string_rendered.get_rect()
+        text_coord += 10
+        intro_rect.top = text_coord
+        intro_rect.x = 10
+        text_coord += intro_rect.height
+        screen.blit(string_rendered, intro_rect)
+    button_back.create_button(screen, (25, 25, 25, 127), 250, 650, 300, 80, 'Вернуться назад', (255, 255, 255))
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                terminate()
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if button_back.pressed(event.pos):
+                    start_screen()
+                    return
+        pygame.display.flip()
+
+def new_game_window(difficulty='normal'):
+    screen.blit(fon, (0, 0))
+    text = font.render('Введите свое имя', 1, pygame.Color('black'))
+    screen.blit(text, (255, 40))
+    button_back.create_button(screen, (25, 25, 25, 127), 450, 650, 300, 80, 'Вернуться назад', (255, 255, 255))
+    sur = pygame.Surface((300, 50), pygame.SRCALPHA)
+    pygame.draw.rect(sur, pygame.Color(25, 25, 25), (0, 0, 300, 50), 0)
+    screen.blit(sur, (250, 300))
+
+    warning = font2.render('Максимальный размер ника - 20 символов', 1, pygame.Color('black'))
+    screen.blit(warning, (220, 360))
+    new_game_button = Button()
+    new_game_button.create_button(screen, (25, 25, 25, 127), 50, 650, 300, 80, 'Начать игру', (255, 255, 255))
+    text = ''
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                terminate()
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if button_back.pressed(event.pos):
+                    start_screen()
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_RETURN:
+                    text = ''
+                elif event.key == pygame.K_BACKSPACE:
+                    text = text[:-1]
+                else:
+                    if len(text) <= 20:
+                        text += str(event.unicode)
+                    else:
+                        pass
+                if len(text) < 21:
+                    pygame.draw.rect(sur, pygame.Color(25, 25, 25), (0, 0, 300, 50), 0)
+                    screen.blit(sur, (250, 300))
+                    txt_surface = font2.render(text, True, pygame.Color('white'))
+                    screen.blit(txt_surface, (250, 310))
+                else:
+                    pass
+            pygame.display.flip()
 
 
 if __name__ == '__main__':
