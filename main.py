@@ -348,6 +348,137 @@ def new_game_window(difficulty='normal'):
                     pass
             pygame.display.flip()
 
+def game(flag, name=False, difficulty='normal'):
+    with open('/Users/sophiasirotkina/Desktop/проект 2048/save.txt') as f:
+        read_data = [(i.rstrip('/n')).split() for i in f.readlines()]
+    a = ([[int(j) for j in i] for i in read_data[:-2]])
+    if len(a) > 1 and flag == 0:
+        name = read_data[-1][0]
+        score = int(read_data[-2][0])
+    if flag == 1:
+        f = open("/Users/sophiasirotkina/Desktop/проект 2048/save.txt", 'w')
+        f.write('')
+        f.close()
+        a = []
+        score = 0
+    if (flag == 1) or (len(a) > 1 and flag == 0):
+        screen.blit(fon, (0, 0))
+        board = Board(a, score, difficulty)
+        board.render(screen)
+        score = str(board.get_score())
+        font3 = pygame.font.SysFont('calibri', 30)
+
+        # Создание прозрачных поверхностей для текста
+        score_surface = pygame.Surface((200, 50), pygame.SRCALPHA)
+        name_surface = pygame.Surface((200, 50), pygame.SRCALPHA)
+
+        score_text = font3.render("Очки:" + score + ' ', True, (0, 0, 0))
+        name_text = font3.render("Игрок:" + name + ' ', True, (0, 0, 0))
+
+        score_surface.blit(score_text, (0, 0))
+        name_surface.blit(name_text, (0, 0))
+
+        screen.blit(score_surface, (100, 50))
+        screen.blit(name_surface, (330, 50))
+
+        button_menu = Button()
+
+        button_menu.create_button(screen, (25, 25, 25, 127),
+                                  160, 720, 500, 70, 'Сохранить игру и вернуться в главное меню', (255, 255, 255))
+        pygame.display.flip()
+
+        while True:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    terminate()
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_LEFT:
+                        board.move_left()
+                        board.render(screen)
+                        board.new_block()
+                    if event.key == pygame.K_RIGHT:
+                        board.move_right()
+                        board.render(screen)
+                        board.new_block()
+                    if event.key == pygame.K_UP:
+                        board.move_up()
+                        board.render(screen)
+                        board.new_block()
+                    if event.key == pygame.K_DOWN:
+                        board.move_down()
+                        board.render(screen)
+                        board.new_block()
+                    score = str(board.get_score())
+                    score_text = font3.render("Очки:" + score + ' ', True, (0, 0, 0), (255, 255, 255))
+                    screen.blit(score_text, (100, 50))
+                    pygame.display.flip()
+                    if board.winn():
+                        board.render(screen)
+                        file = open("/Users/sophiasirotkina/Desktop/проект 2048/table.txt", 'a')
+                        file.write(str(name) + ' ' + str(score) + '\n')
+                        file.close()
+                        if flag == 0:
+                            f = open("/Users/sophiasirotkina/Desktop/проект 2048/save.txt", 'w')
+                            f.write('')
+                            f.close()
+                        pygame.time.delay(2500)
+                        game_over(score, 1)
+                        return
+                    if board.losing():
+                        board.render(screen)
+                        if flag == 0:
+                            f = open("/Users/sophiasirotkina/Desktop/проект 2048/save.txt", 'w')
+                            f.write('')
+                            f.close()
+                        file = open("/Users/sophiasirotkina/Desktop/проект 2048/table.txt", 'a')
+                        file.write(str(name) + ' ' + str(score) + '\n')
+                        file.close()
+                        pygame.time.delay(2500)
+                        game_over(score, 0)
+                        return
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    if button_menu.pressed(event.pos):
+                        remember_board = board.get_board()
+                        f = open("/Users/sophiasirotkina/Desktop/проект 2048/save.txt", 'w')
+                        for i in remember_board:
+                            for j in i:
+                                f.write(str(j) + ' ')
+                            f.write('\n')
+                        f.write(score)
+                        f.write('\n')
+                        f.write(name)
+                        f.close()
+                        start_screen()
+                        return
+            pygame.display.flip()
+    else:
+        start_screen()
+        return
+
+# Функция завершения игры
+def game_over(score, f):
+    screen.blit(fon, (0, 0))
+    if f == 1:
+        text = font.render('Победа!', True, (184, 134, 11))
+        image = load_image("pobeda.png", -1)
+        screen.blit(image, (800 // 2 - image.get_width() / 2, 0))
+    else:
+        text = font.render('Игра окончена', True, (255, 255, 255))
+    screen.blit(text, (800 // 2 - text.get_width() / 2, 800 // 2 - text.get_height() / 2))
+    text2 = font.render('Очки:' + score, True, (255, 255, 255))
+    screen.blit(text2, (800 // 2 - text2.get_width() / 2, 800 // 2 - text.get_height() / 2 + 100))
+    button_menu = Button()
+    button_menu.create_button(screen, (25, 25, 25, 127),
+                              250, 650, 300, 80, 'Вернуться в главное меню', (255, 255, 255))
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                terminate()
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if button_menu.pressed(event.pos):
+                    start_screen()
+                    return
+        pygame.display.flip()
 
 if __name__ == '__main__':
     pygame.init()
