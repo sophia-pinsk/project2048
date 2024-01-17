@@ -11,6 +11,7 @@ pygame.display.set_caption('2048')
 
 screen = pygame.display.set_mode((650, 650))
 
+
 # Функция для загрузки изображения
 def load_image(name, colorkey=None):
     fullname = os.path.join(name)
@@ -23,6 +24,7 @@ def load_image(name, colorkey=None):
     else:
         image = image.convert_alpha()
     return image
+
 
 class Board:
     def __init__(self, list, score=0, difficulty='normal'):
@@ -191,6 +193,35 @@ class Board:
                     myText = font.render(text, 1, pygame.Color('white'))
                     screen.blit(myText, (x + 54 - myText.get_width() / 2, y + 54 - myText.get_height() / 2))
 
+    def losing(self):
+        f = 0
+        for i in range(5):
+            for j in range(5):
+                if self.board[i][j] == 0:
+                    return False
+                if j != 4:
+                    if self.board[i][j] == self.board[i][j + 1]:
+                        f = 1
+                if j != 0:
+                    if self.board[i][j] == self.board[i][j - 1]:
+                        f = 1
+                if i != 0:
+                    if self.board[i][j] == self.board[i - 1][j]:
+                        f = 1
+                if i != 4:
+                    if self.board[i][j] == self.board[i + 1][j]:
+                        f = 1
+                if f == 1:
+                    return False
+        return True
+
+    def winn(self):
+        for i in range(5):
+            for j in range(5):
+                if self.board[i][j] == self.target_score:
+                    return True
+        return False
+
 
 class Button:
     def create_button(self, surface, color, x, y, length, height, text, text_color):
@@ -221,12 +252,13 @@ class Button:
                         return True
         return False
 
+
 def start_screen():
     screen.blit(fon, (0, 0))
     font = pygame.font.SysFont('calibri', 80)
     string_rendered = font.render('2048', 1, pygame.Color('black'))
     screen.blit(string_rendered, (315, 60))
-
+    # Создание кнопок
     button_normal = Button()
     button_normal.create_button(screen, (25, 25, 25, 127), 160, 200, 220, 80, 'Начать обычную игру', (255, 255, 255))
 
@@ -244,7 +276,7 @@ def start_screen():
 
     pygame.display.flip()
 
-
+    # Обработка событий
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -253,6 +285,10 @@ def start_screen():
                 if button3.pressed(event.pos):
                     pygame.display.flip()
                     rules_window()
+                    return
+                if button2.pressed(event.pos):
+                    pygame.display.flip()
+                    game(0)
                     return
                 if button_normal.pressed(event.pos):
                     pygame.display.flip()
@@ -263,8 +299,9 @@ def start_screen():
                     new_game_window(difficulty='hard')
                     return
         pygame.display.flip()
-# Функция завершения работы программы
 
+
+# Функция завершения работы программы
 def terminate():
     pygame.quit()
     sys.exit()
@@ -308,6 +345,7 @@ def rules_window():
                     return
         pygame.display.flip()
 
+
 def new_game_window(difficulty='normal'):
     screen.blit(fon, (0, 0))
     text = font.render('Введите свое имя', 1, pygame.Color('black'))
@@ -316,7 +354,6 @@ def new_game_window(difficulty='normal'):
     sur = pygame.Surface((300, 50), pygame.SRCALPHA)
     pygame.draw.rect(sur, pygame.Color(25, 25, 25), (0, 0, 300, 50), 0)
     screen.blit(sur, (250, 300))
-
     warning = font2.render('Максимальный размер ника - 20 символов', 1, pygame.Color('black'))
     screen.blit(warning, (220, 360))
     new_game_button = Button()
@@ -329,6 +366,9 @@ def new_game_window(difficulty='normal'):
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if button_back.pressed(event.pos):
                     start_screen()
+                if new_game_button.pressed(event.pos) and len(text) > 1:
+                    game(1, text, difficulty)
+                    return
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_RETURN:
                     text = ''
@@ -348,15 +388,16 @@ def new_game_window(difficulty='normal'):
                     pass
             pygame.display.flip()
 
+
 def game(flag, name=False, difficulty='normal'):
-    with open('/Users/sophiasirotkina/Desktop/проект 2048/save.txt') as f:
+    with open('save.txt') as f:
         read_data = [(i.rstrip('/n')).split() for i in f.readlines()]
     a = ([[int(j) for j in i] for i in read_data[:-2]])
     if len(a) > 1 and flag == 0:
         name = read_data[-1][0]
         score = int(read_data[-2][0])
     if flag == 1:
-        f = open("/Users/sophiasirotkina/Desktop/проект 2048/save.txt", 'w')
+        f = open("save.txt", 'w')
         f.write('')
         f.close()
         a = []
@@ -378,8 +419,8 @@ def game(flag, name=False, difficulty='normal'):
         score_surface.blit(score_text, (0, 0))
         name_surface.blit(name_text, (0, 0))
 
-        screen.blit(score_surface, (100, 50))
-        screen.blit(name_surface, (330, 50))
+        screen.blit(score_surface, (185, 50))
+        screen.blit(name_surface, (450, 50))
 
         button_menu = Button()
 
@@ -410,15 +451,17 @@ def game(flag, name=False, difficulty='normal'):
                         board.new_block()
                     score = str(board.get_score())
                     score_text = font3.render("Очки:" + score + ' ', True, (0, 0, 0), (255, 255, 255))
-                    screen.blit(score_text, (100, 50))
+                    screen.blit(score_text, (185, 50))
+                    name_text = font3.render("Игрок:" + name + ' ', True, (0, 0, 0), (250, 250, 250))
+                    screen.blit(name_text, (450, 50))
                     pygame.display.flip()
                     if board.winn():
                         board.render(screen)
-                        file = open("/Users/sophiasirotkina/Desktop/проект 2048/table.txt", 'a')
+                        file = open("table.txt", 'a')
                         file.write(str(name) + ' ' + str(score) + '\n')
                         file.close()
                         if flag == 0:
-                            f = open("/Users/sophiasirotkina/Desktop/проект 2048/save.txt", 'w')
+                            f = open("save.txt", 'w')
                             f.write('')
                             f.close()
                         pygame.time.delay(2500)
@@ -427,10 +470,10 @@ def game(flag, name=False, difficulty='normal'):
                     if board.losing():
                         board.render(screen)
                         if flag == 0:
-                            f = open("/Users/sophiasirotkina/Desktop/проект 2048/save.txt", 'w')
+                            f = open("save.txt", 'w')
                             f.write('')
                             f.close()
-                        file = open("/Users/sophiasirotkina/Desktop/проект 2048/table.txt", 'a')
+                        file = open("table.txt", 'a')
                         file.write(str(name) + ' ' + str(score) + '\n')
                         file.close()
                         pygame.time.delay(2500)
@@ -439,7 +482,7 @@ def game(flag, name=False, difficulty='normal'):
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     if button_menu.pressed(event.pos):
                         remember_board = board.get_board()
-                        f = open("/Users/sophiasirotkina/Desktop/проект 2048/save.txt", 'w')
+                        f = open("save.txt", 'w')
                         for i in remember_board:
                             for j in i:
                                 f.write(str(j) + ' ')
@@ -454,6 +497,7 @@ def game(flag, name=False, difficulty='normal'):
     else:
         start_screen()
         return
+
 
 # Функция завершения игры
 def game_over(score, f):
@@ -480,12 +524,13 @@ def game_over(score, f):
                     return
         pygame.display.flip()
 
+
 if __name__ == '__main__':
     pygame.init()
     pygame.display.set_caption('2048')
     size = WIDTH, HEIGHT = 800, 800
     screen = pygame.display.set_mode(size)
-    fon = pygame.transform.scale(load_image('back.jpg'), (WIDTH, HEIGHT))
+    fon = pygame.transform.scale(load_image('фон 2.jfif'), (WIDTH, HEIGHT))
     font2 = pygame.font.SysFont('calibri', 20)
     font = pygame.font.SysFont('calibri', 40)
     clock = pygame.time.Clock()
