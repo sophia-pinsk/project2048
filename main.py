@@ -286,6 +286,10 @@ def start_screen():
                     pygame.display.flip()
                     rules_window()
                     return
+                if button4.pressed(event.pos):
+                    pygame.display.flip()
+                    tourney_window()
+                    return
                 if button2.pressed(event.pos):
                     pygame.display.flip()
                     game(0)
@@ -520,6 +524,37 @@ def game_over(score, f):
                 terminate()
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if button_menu.pressed(event.pos):
+                    start_screen()
+                    return
+        pygame.display.flip()
+
+
+def tourney_window():
+    screen.blit(fon, (0, 0))
+    text = font.render('Таблица игроков', 1, pygame.Color('black'))
+    screen.blit(text, (230, 20))
+    button_back.create_button(screen, (25, 25, 25, 127), 250, 650, 300, 80, 'Вернуться назад', (255, 255, 255))
+    with open('table.txt') as f:
+        read_data = [(i.rstrip('/n')).split() for i in f.readlines()]
+    read_data.sort(key=lambda x: int(x[-1]))
+    tourney = read_data[::-1][:10]
+    k = 1
+    y = 120
+    for i in tourney:
+        s = ''
+        for j in i[:-1]:
+            s += str(j) + ' '
+        st = f'{str(k)}. {s[:-1]} - {i[-1]}'
+        string_rendered = font2.render(st, 1, pygame.Color('black'))
+        screen.blit(string_rendered, (10, y))
+        y += 30
+        k += 1
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                terminate()
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if button_back.pressed(event.pos):
                     start_screen()
                     return
         pygame.display.flip()
